@@ -1,0 +1,82 @@
+button {
+    padding: 8px 16px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+#media {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+
+#videoContainer {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background-color: black;
+}
+
+
+.view1 #video1 {
+    width: 50vw;
+    height: 100vh; 
+    left: 0;
+    position: absolute;
+    object-fit: contain;
+
+}
+
+.view1 #video2 {
+    width: 50vw;
+    height: 100vh; 
+    right: 0;
+    position: absolute;
+    object-fit: contain;
+
+}
+
+.view2 #video1 {
+    width: 20vw; 
+    height: auto;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    object-fit: contain;
+    z-index: 1;  /* this ensures that video1 is on top */
+}
+
+.view2 #video2 {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    position: absolute;
+    object-fit: contain;
+
+}
+
+
+
+.view3 #video1 {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    position: absolute;
+    object-fit: contain;
+
+}
+
+.view3 #video2 {
+    width: 20vw; 
+    height: auto;
+    bottom: 0;
+    right: 0;
+    position: absolute;
+    object-fit: contain;
+}

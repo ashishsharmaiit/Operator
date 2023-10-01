@@ -1,0 +1,102 @@
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebRTC webcam</title>
+    <link rel="stylesheet" href="stylefinal.css"> 
+ </head>
+<body>
+
+<div class="option">
+    <label for="frame1">Frame Rate 1:</label>
+    <select id="frame1">
+        <option value="5">5 fps</option>
+        <option value="15">15 fps</option>
+        <option value="30" disabled selected>Default @ 30 fps</option>
+        <option value="60">60 fps</option>
+    </select>
+
+    <label for="video_size1">Video Size 1:</label>
+    <select id="video_size1">
+        <option value="320x240">320x240</option>
+        <option value="352x288">352x288</option>
+        <option value="640x360">640x360</option>
+        <option value="640x480" disabled selected>Default @ 640x480</option>
+        <option value="800x600">800x600</option>
+        <option value="960x720">960x720</option>
+        <option value="1280x720">1280x720</option>
+    </select>
+    <label for="codec1">Encoding:         </label>
+    <select id="codec1">
+        <option value="" disabled selected>Default @ No encoding</option>
+        <option value="video/H264">H.264</option>
+        <option value="video/VP8">VP8</option>
+        <option value="video/MJPEG">MJPEG</option>
+    </select>
+</div>
+<div class="option">
+    <label for="frame2">Frame Rate 2:</label>
+    <select id="frame2">
+        <option value="5">5 fps</option>
+        <option value="15">15 fps</option>
+        <option value="30" disabled selected>Default @ 30 fps</option>
+        <option value="60">60 fps</option>
+    </select>
+
+    <label for="video_size2">Video Size 2:</label>
+    <select id="video_size2">
+        <option value="320x240">320x240</option>
+        <option value="352x288">352x288</option>
+        <option value="640x360">640x360</option>
+        <option value="640x480" disabled selected>Default @ 640x480</option>
+        <option value="800x600">800x600</option>
+        <option value="960x720">960x720</option>
+        <option value="1280x720">1280x720</option>
+    </select>
+    <label for="codec2">Encoding:         </label>
+    <select id="codec2">
+        <option value="" disabled selected>Default @ No encoding</option>
+        <option value="video/H264">H.264</option>
+        <option value="video/VP8">VP8</option>
+        <option value="video/MJPEG">MJPEG</option>
+    </select>
+
+</div>
+<div class="option">
+    <label for="audio_codec">Audio Encoding:         </label>
+    <select id="audio_codec">
+        <option value="" disabled selected>Default @ No encoding</option>
+        <option value="audio/opus">Opus</option>
+        <option value="audio/aac">AAC</option>
+        <option value="audio/vorbis">Vorbis</option>
+        <option value="audio/mp3">MP3</option>
+        <option value="audio/pcm">Uncompressed PCM audio</option>
+    </select>
+
+</div>
+<p>Leave default values if no change needed. Directly press on 'Start'.</p>
+<p>Please note that the frame rate and video_size can't be changed after they are set, unless the python file at the camera end is also restarted.</p>
+
+<button id="start" onclick="start()">Start</button>
+<button id="stop" style="display: none" onclick="stop()">Stop</button>
+
+
+<p>Scroll Down after pressing start for video.</p>
+
+<div id="media">
+    <h2>Media</h2>
+
+    <div id="videoContainer" class = "view1">
+        <video id="video1" autoplay playsinline muted></video>
+        <video id="video2" autoplay playsinline muted></video>
+    </div>
+    <div id="dataChannelOutput" class="data-output"></div>
+    
+</div>
+<audio id="audio" autoplay="true"></audio>
+
+
+
+<script src="RobotDataDisplay.js"></script>
+</body>
+</html>
