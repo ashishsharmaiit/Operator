@@ -6,6 +6,7 @@ from aiortc.rtcrtpsender import RTCRtpSender
 from geometry_msgs.msg import Point
 from std_msgs.msg import Bool
 import rospy
+from web_joystick_control.msg import JoystickData
 
 class WebRTCManager:
 
@@ -21,6 +22,7 @@ class WebRTCManager:
         self.data_channel_required = data_channel_required
         self.clicked_point_pub = rospy.Publisher('/clicked_point', Point, queue_size=10)
         self.trigger_arm_pub = rospy.Publisher('/trigger_arm', Bool, queue_size=10)
+        self.joystick_data_pub = rospy.Publisher("/joystick_data", JoystickData, queue_size= 10)
 
     def force_codec(self, pc, sender, forced_codec):
         kind = forced_codec.split("/")[0]
@@ -40,28 +42,79 @@ class WebRTCManager:
         else:
             print("Data channel is not open or not yet initialized!")
 
+    
+    # # Only "Auto" mode enabled
+    # async def on_channel_message(self, message):
+    #     print(f"Received message: {message}")
+    #     # *** ROS Publisher
+    #     webrtc_data = json.loads(message)
+    #     if "x" in webrtc_data and "y" in webrtc_data:
+    #         # Create a Point message
+    #         clicked_point_msg = Point()
+    #         clicked_point_msg.x = webrtc_data["x"]  # Replace with your x coordinate
+    #         clicked_point_msg.y = webrtc_data["y"]  # Replace with your y coordinate
+    #         clicked_point_msg.z = 0   # Replace with your z coordinate if needed
 
+    #         # Publish the message on the /clicked_point topic
+    #         self.clicked_point_pub.publish(clicked_point_msg)
+            
+    #         trigger_arm_msg = Bool()
+    #         trigger_arm_msg.data = True
+    #         self.trigger_arm_pub.publish(trigger_arm_msg)
+    #     else:
+    #         rospy.loginfo("Waiting for operator to click ...")
+    #     # *** ROS Publisher
+
+    def check_mode(self, webrtc_data):
+        if (webrtc_data["x"] is None) or (webrtc_data["y"] is None):
+            teleoperation_mode = "MANUAL"
+        else:
+            teleoperation_mode = "AUTO"
+        return teleoperation_mode
+
+    # Only "Auto" mode enabled
     async def on_channel_message(self, message):
         print(f"Received message: {message}")
-        # *** ROS Publisher
+        # *** ROS ***
         webrtc_data = json.loads(message)
-        if "x" in webrtc_data and "y" in webrtc_data:
-            # Create a Point message
-            clicked_point_msg = Point()
-            clicked_point_msg.x = webrtc_data["x"]  # Replace with your x coordinate
-            clicked_point_msg.y = webrtc_data["y"]  # Replace with your y coordinate
-            clicked_point_msg.z = 0   # Replace with your z coordinate if needed
+        teleoperation_mode = self.check_mode(webrtc_data)
+        print("Joystick is in", teleoperation_mode,  " mode!")        
 
-            # Publish the message on the /clicked_point topic
-            self.clicked_point_pub.publish(clicked_point_msg)
+        if teleoperation_mode == "MANUAL":
+            try:
+                # Extract the data from the received message
+                # frameid_msg = webrtc_data["id"]
+                timestamp_msg = rospy.Time.from_sec(webrtc_data["timestamp"])
+                axes_msg = webrtc_data["axes"]
+                buttons_msg = [1 if button["value"] else 0 for button in webrtc_data["buttons"]]
+                joystick_data_msg = JoystickData(stamp=timestamp_msg, axes=axes_msg, buttons=buttons_msg)
+                # Publish the message on the /joystick_data topic
+                self.joystick_data_pub.publish(joystick_data_msg)
             
-            trigger_arm_msg = Bool()
-            trigger_arm_msg.data = True
-            self.trigger_arm_pub.publish(trigger_arm_msg)
-        else:
-            rospy.loginfo("Waiting for operator to click ...")
-        # *** ROS Publisher
+            except Exception as e:
+                rospy.logerr("Error processing joystick data in Manual mode: %s", str(e))
+
+        elif teleoperation_mode == "AUTO":
+            try:
+                # Create a Point message
+                clicked_point_msg = Point()
+                clicked_point_msg.x = webrtc_data["x"]  # Replace with your x coordinate
+                clicked_point_msg.y = webrtc_data["y"]  # Replace with your y coordinate
+                clicked_point_msg.z = 0   # Replace with your z coordinate if needed
+
+                # Publish the message on the /clicked_point topic
+                self.clicked_point_pub.publish(clicked_point_msg)
                 
+                trigger_arm_msg = Bool()
+                trigger_arm_msg.data = True
+                self.trigger_arm_pub.publish(trigger_arm_msg)
+
+            except Exception as e:
+                rospy.logerr("Error processing joystick data in Auto mode: %s", str(e))
+            
+        else:
+            rospy.logerr("Teleoperation Mode is not Valid ...")
+        # *** ROS ***
 
 
     async def handle_offer(self, data):
