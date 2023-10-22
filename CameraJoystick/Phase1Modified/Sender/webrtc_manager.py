@@ -5,6 +5,7 @@ from aiortc.contrib.media import MediaPlayer, MediaRelay
 from aiortc.rtcrtpsender import RTCRtpSender
 from geometry_msgs.msg import Point
 from std_msgs.msg import Bool
+from std_msgs.msg import String
 import rospy
 from web_joystick_control.msg import JoystickData
 
@@ -23,6 +24,7 @@ class WebRTCManager:
         self.clicked_point_pub = rospy.Publisher('/clicked_point', Point, queue_size=10)
         self.trigger_arm_pub = rospy.Publisher('/trigger_arm', Bool, queue_size=10)
         self.joystick_data_pub = rospy.Publisher("/joystick_data", JoystickData, queue_size= 10)
+        self.operation_mode_pub = rospy.Publisher("/operation_mode", String, queue_size= 10)
 
     def force_codec(self, pc, sender, forced_codec):
         kind = forced_codec.split("/")[0]
@@ -68,8 +70,10 @@ class WebRTCManager:
     def check_mode(self, webrtc_data):
         if (webrtc_data["x"] is None) or (webrtc_data["y"] is None):
             teleoperation_mode = "MANUAL"
+            self.operation_mode_pub.publish(teleoperation_mode)
         else:
             teleoperation_mode = "AUTO"
+            self.operation_mode_pub.publish(teleoperation_mode)
         return teleoperation_mode
 
     # Only "Auto" mode enabled
