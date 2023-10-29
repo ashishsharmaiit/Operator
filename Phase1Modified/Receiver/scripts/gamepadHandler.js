@@ -21,55 +21,55 @@ function handleGamepadDisconnected(event) {
 function isButtonDebounced() {
     const currentTime = Date.now();
     const timeDifference = currentTime - lastButtonPressTime;
-  
+
     if (timeDifference < 300) { // assuming 300ms as the threshold
-      return false;
+        return false;
     }
-  
+
     lastButtonPressTime = currentTime;
     return true;
-  }
-  
-  
-function toggleAutoMode(dataChannel) {        
+}
+
+
+function toggleAutoMode(dataChannel) {
     console.log('AutoMode Enabled');
     videoContainer.classList.remove('view1', 'view2', 'view3');
     videoContainer.classList.add('view3');
     dot.classList.remove('dotHidden');
     dot.classList.add('dotNotHidden');
     modeSet("AutoMode");
-        clearInterval(updateLoopInterval); // Clear the interval to stop the loop
-        autoModeLoopInterval = setInterval(() => {
-            const gamepadList2 = navigator.getGamepads();
-            for (let i = 0; i < gamepadList2.length; i++) {
-                const gamepad2 = gamepadList2[i];
-                if (gamepad2) {
-                    if (!gamepads2[gamepad2.index] || gamepad2.timestamp !== gamepads2[gamepad2.index].timestamp) {
-                        console.log(`Automode Pointer Moving`, gamepad2);
-                        gamepads2[gamepad2.index] = gamepad2;
-                        
-                        const sensitivity = 30; // Adjust as needed
-                        let x = (gamepad2.axes[0] * sensitivity);
-                        let y = (gamepad2.axes[1] * sensitivity);
-                        moveDot (x,y);
-                        
-                        if (gamepad2.buttons[7] && gamepad2.buttons[7].pressed && isButtonDebounced()) {
-                            console.log('AutoMode Disabled');
-                            dot.classList.remove('dotNotHidden');
-                            dot.classList.add('dotHidden');                        
-                            clearInterval(autoModeLoopInterval); // Clear the interval to stop the loop
-                            startGamepadUpdates(dataChannel);
-                        } else if (gamepad2.buttons[0] && gamepad2.buttons[0].pressed && isButtonDebounced()) {
-                            sendDotCoordinates (dataChannel);
-                        }
+    clearInterval(updateLoopInterval); // Clear the interval to stop the loop
+    autoModeLoopInterval = setInterval(() => {
+        const gamepadList2 = navigator.getGamepads();
+        for (let i = 0; i < gamepadList2.length; i++) {
+            const gamepad2 = gamepadList2[i];
+            if (gamepad2) {
+                if (!gamepads2[gamepad2.index] || gamepad2.timestamp !== gamepads2[gamepad2.index].timestamp) {
+                    console.log(`Automode Pointer Moving`, gamepad2);
+                    gamepads2[gamepad2.index] = gamepad2;
+
+                    const sensitivity = 30; // Adjust as needed
+                    let x = (gamepad2.axes[0] * sensitivity);
+                    let y = (gamepad2.axes[1] * sensitivity);
+                    moveDot(x, y);
+
+                    if (gamepad2.buttons[7] && gamepad2.buttons[7].pressed && isButtonDebounced()) {
+                        console.log('AutoMode Disabled');
+                        dot.classList.remove('dotNotHidden');
+                        dot.classList.add('dotHidden');
+                        clearInterval(autoModeLoopInterval); // Clear the interval to stop the loop
+                        startGamepadUpdates(dataChannel);
+                    } else if (gamepad2.buttons[0] && gamepad2.buttons[0].pressed && isButtonDebounced()) {
+                        sendDotCoordinates(dataChannel);
                     }
-                } else if (gamepads2[i]) {
-                    console.log(`Gamepad ${i} disconnected`);
-                    delete gamepads2[i];
                 }
+            } else if (gamepads2[i]) {
+                console.log(`Gamepad ${i} disconnected`);
+                delete gamepads2[i];
             }
-        }, 100); // Every 100 milliseconds
-    }
+        }
+    }, 100); // Every 100 milliseconds
+}
 
 
 export function startGamepadUpdates(dataChannel) {
@@ -95,12 +95,13 @@ export function startGamepadUpdates(dataChannel) {
                         toggleRotation();
                     } else if (gamepad.buttons[7] && gamepad.buttons[7].pressed && isButtonDebounced()) {
                         const json = JSON.stringify(gamepadData);
+                        console.log(`Sending Auto mode status`);
                         dataChannel.send(json); // Send gamepad data to the other peer
-                        toggleAutoMode (dataChannel);
+                        toggleAutoMode(dataChannel);
                     } else {
-                    const json = JSON.stringify(gamepadData);
-                    dataChannel.send(json); // Send gamepad data to the other peer
-                }
+                        const json = JSON.stringify(gamepadData);
+                        dataChannel.send(json); // Send gamepad data to the other peer
+                    }
                 }
             } else if (gamepads[i]) {
                 console.log(`Gamepad ${i} disconnected`);
