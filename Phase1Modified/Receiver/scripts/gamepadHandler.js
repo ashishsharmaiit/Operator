@@ -58,6 +58,17 @@ function toggleAutoMode(dataChannel) {
                             dot.classList.remove('dotNotHidden');
                             dot.classList.add('dotHidden');                        
                             clearInterval(autoModeLoopInterval); // Clear the interval to stop the loop
+                            let date = new Date();
+                            const senddata = {
+                                mode: "manual",
+                                timestamp: date,
+                                axes: null,
+                                buttons: null,
+                                x: null,
+                                y: null
+                            };
+                            const json = JSON.stringify(senddata);
+                            dataChannel.send(json); // Send gamepad data to the other peer
                             startGamepadUpdates(dataChannel);
                         } else if (gamepad2.buttons[0] && gamepad2.buttons[0].pressed && isButtonDebounced()) {
                             sendDotCoordinates (dataChannel);
@@ -83,6 +94,7 @@ export function startGamepadUpdates(dataChannel) {
                     console.log(`Gamepad ${i} status changed:`);
                     gamepads[gamepad.index] = gamepad;
                     const gamepadData = {
+                        mode: "manual",
                         timestamp: gamepad.timestamp,
                         axes: gamepad.axes,
                         buttons: gamepad.buttons.map(button => ({ pressed: button.pressed, value: button.value })),
@@ -94,6 +106,14 @@ export function startGamepadUpdates(dataChannel) {
                     } else if (gamepad.buttons[3] && gamepad.buttons[3].pressed && isButtonDebounced()) {
                         toggleRotation();
                     } else if (gamepad.buttons[7] && gamepad.buttons[7].pressed && isButtonDebounced()) {
+                        const gamepadData = {
+                            mode: "auto",
+                            timestamp: gamepad.timestamp,
+                            axes: gamepad.axes,
+                            buttons: gamepad.buttons.map(button => ({ pressed: button.pressed, value: button.value })),
+                            x: null,
+                            y: null
+                        };
                         const json = JSON.stringify(gamepadData);
                         dataChannel.send(json); // Send gamepad data to the other peer
                         toggleAutoMode (dataChannel);

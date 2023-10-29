@@ -34,7 +34,7 @@ export function negotiate() {
         var offer = pc.localDescription;
         
         //new code starts
-        var ws = new WebSocket('ws://34.221.226.79:8085/');
+        var ws = new WebSocket('ws://34.221.226.79:8084/');
         console.log('sending offer')
         ws.onopen = function (event) {
             ws.send(UI.getFormDataAsJSON(offer));

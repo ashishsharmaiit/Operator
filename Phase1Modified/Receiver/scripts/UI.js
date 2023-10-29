@@ -112,12 +112,13 @@ export function sendDotCoordinates (dataChannel) {
     relativeDotPosition.y = (currentDotPosition.y-yMinValue)/(yMaxValue-yMinValue)*100
     let date = new Date()
     const senddata = {
+        mode: "auto",
         timestamp: date,
         axes: null,
         buttons: null,
         x: relativeDotPosition.x,
         y: relativeDotPosition.y
-    }
+    };
     const json = JSON.stringify(senddata);
     dataChannel.send(json); // Send gamepad data to the other peer
 }
