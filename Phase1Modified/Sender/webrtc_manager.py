@@ -5,13 +5,13 @@ from aiortc.contrib.media import MediaPlayer, MediaRelay
 from aiortc.rtcrtpsender import RTCRtpSender
 # *** ROS Comment from here***
 
-'''
+
 from geometry_msgs.msg import Point
 from std_msgs.msg import Bool
 from std_msgs.msg import String
 import rospy
 from web_joystick_control.msg import JoystickData
-'''
+
 # *** ROS Comment till here***
 
 
@@ -29,12 +29,12 @@ class WebRTCManager:
         self.data_channel_required = data_channel_required
         # *** ROS Comment from here***
 
-        '''
+        
         self.clicked_point_pub = rospy.Publisher('/clicked_point', Point, queue_size=10)
         self.trigger_arm_pub = rospy.Publisher('/trigger_arm', Bool, queue_size=10)
         self.joystick_data_pub = rospy.Publisher("/joystick_data", JoystickData, queue_size= 10)
         self.operation_mode_pub = rospy.Publisher("/operation_mode", String, queue_size= 10)
-        '''
+        
         # *** ROS Comment till here***
 
 
@@ -81,17 +81,17 @@ class WebRTCManager:
 
 
     # *** ROS Comment from here***
-    '''
+    
     def check_mode(self, webrtc_data):
-        if (webrtc_data["x"] is None) or (webrtc_data["y"] is None):
+        if (webrtc_data["mode"] == "manual"):
             teleoperation_mode = "MANUAL"
             self.operation_mode_pub.publish(teleoperation_mode)
-        else:
+        elif (webrtc_data["mode"] == "auto"):
             teleoperation_mode = "AUTO"
             self.operation_mode_pub.publish(teleoperation_mode)
         return teleoperation_mode
 
-    '''
+    
     # *** ROS Comment till here***
 
 
@@ -99,7 +99,7 @@ class WebRTCManager:
     async def on_channel_message(self, message):
         print(f"Received message: {message}")
         # *** ROS Comment from here***
-        '''
+        
         webrtc_data = json.loads(message)
         teleoperation_mode = self.check_mode(webrtc_data)
         print("Joystick is in", teleoperation_mode,  " mode!")        
@@ -139,7 +139,7 @@ class WebRTCManager:
         else:
             rospy.logerr("Teleoperation Mode is not Valid ...")
         # *** ROS **
-        '''
+        
         # *** ROS Comment till here***
 
 
