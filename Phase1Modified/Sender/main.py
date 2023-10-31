@@ -1,6 +1,6 @@
 import asyncio
 #Ros comment below line
-#import rospy
+import rospy
 from websocket_client import WebsocketClient
 from robot_controller import RobotController
 
@@ -19,6 +19,6 @@ async def main():
         
 if __name__ == "__main__":
     #Ros comment below line
-    #rospy.init_node('webrtc_node', anonymous=True)
+    rospy.init_node('webrtc_node', anonymous=True)
     asyncio.run(main())
 
