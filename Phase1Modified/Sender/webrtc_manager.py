@@ -81,6 +81,7 @@ class WebRTCManager:
         teleoperation_mode = self.check_mode(webrtc_data)
         print("Joystick is in", teleoperation_mode,  " mode!")        
         
+        
         if teleoperation_mode == "MANUAL":
             try:
                 # Extract the data from the received message
