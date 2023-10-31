@@ -1,10 +1,6 @@
 import asyncio
 #Ros comment below line
-<<<<<<< HEAD:Phase1Modified/Sender/main.py
 import rospy
-=======
-#import rospy
->>>>>>> 5eda64fca35cc80a76756637c974b74c3de84fe5:CameraJoystick/Phase1Modified/Sender/main.py
 from websocket_client import WebsocketClient
 from robot_controller import RobotController
 
@@ -23,10 +19,6 @@ async def main():
         
 if __name__ == "__main__":
     #Ros comment below line
-<<<<<<< HEAD:Phase1Modified/Sender/main.py
     rospy.init_node('webrtc_node', anonymous=True)
-=======
-    #rospy.init_node('webrtc_node', anonymous=True)
->>>>>>> 5eda64fca35cc80a76756637c974b74c3de84fe5:CameraJoystick/Phase1Modified/Sender/main.py
     asyncio.run(main())
 
